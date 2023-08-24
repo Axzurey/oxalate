@@ -1,15 +1,20 @@
 import { None, Option, Some } from "./option";
 import RIterator from "./riterator";
 
-export default class Path {
+export type FileNameExt<S extends string> = 
+    S extends `${infer _Head}/${infer Tail}` ? FileNameExt<Tail> :
+    S extends `${infer Name}.${infer Ext}` ? [Name, Ext] :
+     never
+
+export default class Path<T extends string> {
     
     private directory: RIterator<string>;
 
-    constructor(path: string) {
+    constructor(path: T) {
         this.directory = RIterator.from(path.split('/'));
     }
 
-    public static from_path(path: Path): Path {
+    public static from_path<T extends string>(path: Path<T>): Path<T> {
         return new Path(path.directory.collect_array().join('/'));
     }
 
@@ -31,7 +36,7 @@ export default class Path {
         return this.directory.collect_array().join('/')
     }
 
-    parent(): Option<Path> {
+    parent(): Option<Path<T>> { //TODO: it shouldn't be of type <T>, but rather a different type
         if (this.directory.length() === 0) return None();
         return Some(new Path(this.directory.take(this.directory.length() - 1).unwrap().collect_array().join('/')));
     }
