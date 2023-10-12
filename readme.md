@@ -1,1 +1,1 @@
-I am sorry, documentation will arrive once I figure out how to do it :p
+Documentation soon:tm:
